@@ -21,22 +21,22 @@ class MyTCPHandler(BaseRequestHandler):
         while True:
             try:
                 self.data = self.request.recv(1024).strip()
-                if not self.data:
-                    return
-                serialized_obj = self.data
-                event: MouseEvent = pickle.loads(serialized_obj)
-                self.mouse.position = event.position
-                if event.clicked_button and event.click_state:
-                    if event.click_state == ClickState.PRESSED:
-                        self.mouse.press(event.clicked_button)
-                    elif event.click_state == ClickState.RELEASED:
-                        self.mouse.release(event.clicked_button)
-                if event.scroll_delta:
-                    self.mouse.scroll(event.scroll_delta)
-                self.request.sendall(bytes("OK", "utf-8"))
             except TimeoutError:
                 logging.error("Timeout, closing connection with %s", self.client_address[0])
                 return
+            if not self.data:
+                return
+            serialized_obj = self.data
+            event: MouseEvent = pickle.loads(serialized_obj)
+            self.mouse.position = event.position
+            if event.clicked_button and event.click_state:
+                if event.click_state == ClickState.PRESSED:
+                    self.mouse.press(event.clicked_button)
+                elif event.click_state == ClickState.RELEASED:
+                    self.mouse.release(event.clicked_button)
+            if event.scroll_delta:
+                self.mouse.scroll(event.scroll_delta)
+            self.request.sendall(bytes("OK", "utf-8"))
 
 
 if __name__ == "__main__":

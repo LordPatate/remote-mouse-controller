@@ -1,11 +1,20 @@
 import logging
+import pickle
 from socketserver import BaseRequestHandler, TCPServer
+
+from pynput.mouse import Controller
+
+from mouse_event import ClickState, MouseEvent
 
 HOST, PORT = "localhost", 9999
 
 
 class MyTCPHandler(BaseRequestHandler):
     data: bytes
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.mouse = Controller()
 
     def handle(self):
         self.request.settimeout(60)
@@ -14,10 +23,17 @@ class MyTCPHandler(BaseRequestHandler):
                 self.data = self.request.recv(1024).strip()
                 if not self.data:
                     return
-                message = str(self.data, 'utf-8')
-                logging.info("%s wrote: %s", self.client_address[0], message)
-                answer = f"Your message '{message}' was well received"
-                self.request.sendall(bytes(answer, "utf-8"))
+                serialized_obj = self.data
+                event: MouseEvent = pickle.loads(serialized_obj)
+                self.mouse.position = event.position
+                if event.clicked_button and event.click_state:
+                    if event.click_state == ClickState.PRESSED:
+                        self.mouse.press(event.clicked_button)
+                    elif event.click_state == ClickState.RELEASED:
+                        self.mouse.release(event.clicked_button)
+                if event.scroll_delta:
+                    self.mouse.scroll(event.scroll_delta)
+                self.request.sendall(bytes("OK", "utf-8"))
             except TimeoutError:
                 logging.error("Timeout, closing connection with %s", self.client_address[0])
                 return

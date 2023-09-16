@@ -30,7 +30,7 @@ class MouseMonitor:
     def _on_click(self, x, y, button, pressed):
         event = MouseEvent(
             position=(x, y),
-            click=button,
+            clicked_button=button,
             click_state=ClickState.PRESSED if pressed else ClickState.RELEASED
         )
         self._event_queue.put(event)

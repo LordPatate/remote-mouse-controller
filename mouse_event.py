@@ -13,6 +13,6 @@ class ClickState(Enum):
 @dataclass(slots=True)
 class MouseEvent:
     position: Tuple[float, float]
-    click: Optional[Button] = None
+    clicked_button: Optional[Button] = None
     click_state: Optional[ClickState] = None
     scroll_delta: Optional[Tuple[float, float]] = None

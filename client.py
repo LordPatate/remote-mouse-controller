@@ -1,4 +1,4 @@
-import json
+import pickle
 import socket
 from queue import Queue
 
@@ -58,10 +58,10 @@ def main():
         sock.connect((HOST, PORT))
         while True:
             event = monitor.poll()
-            data = json.dumps(event)
-            sock.sendall(bytes(data + "\n", "utf-8"))
+            data = pickle.dumps(event)
+            sock.sendall(data)
             try:
-                _ = sock.recv(1)
+                _ = sock.recv(256)
             except (ConnectionAbortedError, ConnectionResetError):
                 print("Connection closed by server")
                 break

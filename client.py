@@ -55,7 +55,9 @@ class MouseMonitor:
 def main():
     monitor = MouseMonitor()
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:  # SOCK_STREAM means a TCP socket
+        print(f"Trying to connect to {HOST}:{PORT}")
         sock.connect((HOST, PORT))
+        print("Connected to server")
         while True:
             event = monitor.poll()
             data = pickle.dumps(event)

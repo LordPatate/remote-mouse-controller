@@ -17,6 +17,7 @@ class MyTCPHandler(BaseRequestHandler):
         self.mouse = Controller()
 
     def handle(self):
+        logging.info(f"Connected to {self.client_address[0]}")
         self.request.settimeout(60)
         while True:
             try:
@@ -25,6 +26,7 @@ class MyTCPHandler(BaseRequestHandler):
                 logging.error("Timeout, closing connection with %s", self.client_address[0])
                 return
             if not self.data:
+                logging.info(f"Disconnected from {self.client_address[0]}")
                 return
             serialized_obj = self.data
             event: MouseEvent = pickle.loads(serialized_obj)

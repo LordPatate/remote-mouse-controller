@@ -62,8 +62,8 @@ def main(server_ip: str):
         while True:
             event = monitor.poll()
             data = pickle.dumps(event)
-            sock.sendall(data)
             try:
+                sock.sendall(data)
                 _ = sock.recv(256)
             except (ConnectionAbortedError, ConnectionResetError):
                 print("Connection closed by server")

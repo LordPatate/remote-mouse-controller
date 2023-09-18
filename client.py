@@ -1,12 +1,13 @@
 import pickle
 import socket
+from argparse import ArgumentParser
 from queue import Queue
 
 from pynput import mouse
 
 from mouse_event import ClickState, MouseEvent
+from server import PORT
 
-HOST, PORT = "localhost", 9999
 DELAY = 1 / 120
 
 
@@ -52,11 +53,11 @@ class MouseMonitor:
         self.close()
 
 
-def main():
+def main(server_ip: str):
     monitor = MouseMonitor()
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:  # SOCK_STREAM means a TCP socket
-        print(f"Trying to connect to {HOST}:{PORT}")
-        sock.connect((HOST, PORT))
+        print(f"Trying to connect to {server_ip}:{PORT}")
+        sock.connect((server_ip, PORT))
         print("Connected to server")
         while True:
             event = monitor.poll()
@@ -71,4 +72,12 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    parser = ArgumentParser()
+    parser.add_argument(
+        "server_ip",
+        nargs="?",
+        default="localhost",
+        type=str,
+    )
+    args = parser.parse_args()
+    main(args.server_ip)

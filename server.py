@@ -6,7 +6,7 @@ from pynput.mouse import Controller
 
 from mouse_event import ClickState, MouseEvent
 
-HOST, PORT = "localhost", 9999
+HOST, PORT = "0.0.0.0", 9999
 
 
 class MyTCPHandler(BaseRequestHandler):

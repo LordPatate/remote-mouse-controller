@@ -34,7 +34,7 @@ class MyTCPHandler(BaseRequestHandler):
                 elif event.click_state == ClickState.RELEASED:
                     mouse.release(event.clicked_button)
             if event.scroll_delta:
-                mouse.scroll(event.scroll_delta)
+                mouse.scroll(*event.scroll_delta)
             self.request.sendall(bytes("OK", "utf-8"))
 
 
